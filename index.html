@@ -4,67 +4,110 @@
   <meta charset="UTF-8">
   <title>Prescripts</title>
 
-  <!-- CSS goes here -->
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
   <style>
     body {
+      margin: 0;
+      height: 100vh;
       background: black;
-      color: white;
-      font-family: monospace;
-      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Share Tech Mono', monospace;
+      overflow: hidden;
+      color: #d0fefe;
     }
 
-    .glow-text {
-      color: #fff;
+    .container {
+      text-align: center;
+      max-width: 600px;
+    }
+
+    #mainText {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+      line-height: 1.6;
+
       text-shadow:
-        0 0 5px #fff,
-        0 0 10px #0ff,
-        0 0 20px #0ff;
+        0 0 2px #d0fefe,
+        0 0 6px #00ffff,
+        0 0 12px #00ffff;
     }
 
     button {
-      margin-top: 20px;
-      padding: 10px;
-      background: black;
-      color: white;
-      border: 1px solid cyan;
+      background: transparent;
+      border: 1px solid #00ffff;
+      color: #00ffff;
+      padding: 8px 16px;
+      font-family: inherit;
       cursor: pointer;
+      transition: all 0.2s ease;
     }
 
+    button:hover {
+      background: #00ffff;
+      color: black;
+      box-shadow: 0 0 10px #00ffff;
+    }
+
+    /* Popup */
     .popup {
       display: none;
       position: fixed;
-      top: 30%;
+      top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       background: black;
-      border: 1px solid cyan;
+      border: 1px solid #00ffff;
       padding: 20px;
+      width: 300px;
+      text-align: center;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      background: black;
+      color: #00ffff;
+      border: 1px solid #00ffff;
+      margin-bottom: 10px;
+      font-family: inherit;
+      padding: 5px;
+      resize: none;
     }
   </style>
 </head>
-
 <body>
 
-  <h1 class="glow-text" id="mainText">
-    _Please submit your drawing request as a prescript_
-  </h1>
+  <div class="container">
+    <h1 id="mainText"></h1>
 
-  <button onclick="openPopup()">Submit Request</button>
+    <!-- Future image goes here -->
+    <!-- <img src="your.png" alt="symbol"> -->
 
+    <button onclick="openPopup()">Submit Request</button>
+  </div>
+
+  <!-- Popup -->
   <div id="popup" class="popup">
-    <textarea id="requestText"></textarea><br>
+    <textarea id="requestText" placeholder="Write your request..."></textarea>
+    <br>
     <button onclick="sendRequest()">Send</button>
     <button onclick="closePopup()">Close</button>
   </div>
 
   <!-- EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-
   <script>
     (function(){
-      emailjs.init("YOUR_PUBLIC_KEY");
+      emailjs.init("YOUR_PUBLIC_KEY"); // replace this
     })();
+  </script>
 
+  <script>
+    // Popup logic
     function openPopup() {
       document.getElementById("popup").style.display = "block";
     }
@@ -73,19 +116,54 @@
       document.getElementById("popup").style.display = "none";
     }
 
+    // Send request (EmailJS)
     function sendRequest() {
       const text = document.getElementById("requestText").value;
+
+      if (!text.trim()) {
+        alert("Please write something first.");
+        return;
+      }
 
       emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
         message: text
       }).then(() => {
-        alert("Request sent!");
+        alert("Request sent.");
         closePopup();
+        document.getElementById("requestText").value = "";
       }, (error) => {
         alert("Error sending request.");
         console.log(error);
       });
     }
+
+    // Glitch / decrypt animation
+    const text = "_Please submit your drawing request as a prescript_";
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+
+    let frame = 0;
+
+    function scrambleText() {
+      let output = "";
+
+      for (let i = 0; i < text.length; i++) {
+        if (i < frame) {
+          output += text[i];
+        } else {
+          output += chars[Math.floor(Math.random() * chars.length)];
+        }
+      }
+
+      document.getElementById("mainText").innerText = output;
+
+      frame += 0.5;
+
+      if (frame <= text.length) {
+        requestAnimationFrame(scrambleText);
+      }
+    }
+
+    scrambleText();
   </script>
 
 </body>
