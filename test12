@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Prescripts</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="container">
+    <h1 class="glow-text" id="mainText">
+      _Please submit your drawing request as a prescript_
+    </h1>
+
+    <button onclick="openPopup()">Submit Request</button>
+  </div>
+
+  <!-- Popup -->
+  <div id="popup" class="popup">
+    <textarea id="requestText" placeholder="Write your request..."></textarea>
+    <button onclick="sendRequest()">Send</button>
+    <button onclick="closePopup()">Close</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+body {
+  background: black;
+  color: white;
+  font-family: monospace;
+  text-align: center;
+}
+
+.glow-text {
+  color: #fff;
+  text-shadow: 
+    0 0 5px #fff,
+    0 0 10px #0ff,
+    0 0 20px #0ff;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px;
+  background: black;
+  color: white;
+  border: 1px solid cyan;
+  cursor: pointer;
+}
+
+.popup {
+  display: none;
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: black;
+  border: 1px solid cyan;
+  padding: 20px;
+}
+function openPopup() {
+  document.getElementById("popup").style.display = "block";
+}
+
+function closePopup() {
+  document.getElementById("popup").style.display = "none";
+}
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<script>
+  (function(){
+    emailjs.init("YOUR_PUBLIC_KEY");
+  })();
+</script>
+function sendRequest() {
+  const text = document.getElementById("requestText").value;
+
+  emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+    message: text
+  }).then(() => {
+    alert("Request sent!");
+    closePopup();
+  }, (error) => {
+    alert("Error sending request.");
+    console.log(error);
+  });
+}
+const chars = "!<>-_\\/[]{}—=+*^?#________";
+const text = "_Please submit your drawing request as a prescript_";
+
+let index = 0;
+
+function animateText() {
+  let display = "";
+
+  for (let i = 0; i < text.length; i++) {
+    if (i < index) {
+      display += text[i];
+    } else {
+      display += chars[Math.floor(Math.random() * chars.length)];
+    }
+  }
+
+  document.getElementById("mainText").innerText = display;
+
+  if (index < text.length) {
+    index++;
+    setTimeout(animateText, 50);
+  }
+}
+
+animateText();
